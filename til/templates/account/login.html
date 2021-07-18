@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+    {% comment %} <h1>{% trans "Sign In" %}</h1>
+
+    {% get_providers as socialaccount_providers %}
+
+    {% if socialaccount_providers %}
+        <p>
+            {% blocktrans with site.name as site_name %}
+                Please sign in with one of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a> for a {{ site_name }} account and sign in below:
+            {% endblocktrans %}
+        </p>
+
+        <div class="socialaccount_ballot">
+
+            <ul class="socialaccount_providers">
+                {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+            </ul>
+
+            <div class="login-or">{% trans 'or' %}</div>
+
+        </div>
+
+            {% include "socialaccount/snippets/login_extra.html" %}
+
+    {% else %}
+        <p>{% blocktrans %}If you have not created an account yet, then please <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+    {% endif %}
+
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+        <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
+    </form> {% endcomment %}
+
+    <div class="flex justify-center items-center bg-gray-100">
+        <form class="p-10 bg-white rounded flex justify-center items-center flex-col shadow-md login" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 text-gray-600 mb-2" viewbox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+            </svg>
+            <p class="mb-5 text-3xl uppercase text-gray-600">Login</p>
+            <input type="email" name="email" class="mb-5 p-3 w-80 focus:border-purple-700 rounded border-2 outline-none" autocomplete="off" placeholder="Email" required>
+            <input type="password" name="password" class="mb-5 p-3 w-80 focus:border-purple-700 rounded border-2 outline-none" autocomplete="off" placeholder="Password" required>
+            <button class="bg-purple-600 hover:bg-purple-900 text-white font-bold p-2 rounded w-80 primaryAction" type="submit">{% trans "Sign In" %}</button>
+            <a class="bg-purple-600 hover:bg-purple-900 text-white font-bold p-2 rounded w-80 mt-4 text-center" href="{{ signup_url }}"><span>{% trans "Sign Up" %}</span></a>
+            <a class="button secondaryAction mt-4" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+        </form>
+    </div>
+    
+
+{% endblock %}
